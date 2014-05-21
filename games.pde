@@ -1,30 +1,31 @@
 //SNAKE 3D
-SnakePixel[] spixel = new SnakePixel[100];
+SnakePixel[] spixel = new SnakePixel[512];
 boolean created = false;
 int foodPosx=-1, foodPosy=-1, foodPosz=-1;
 int nextDirection;
-int snakeSpeed = 200;
 boolean gameover = false;
 int foodCounter = 0;
-boolean snakeInitialized = false;
+boolean snakeEnabled = false;
+
 void snake() {
-	displayedFrameLabel = "Playing snake !";
-	if(millis() - now >= snakeSpeed){  // Do this only every <snakeSpeed> ms
-		keyboardManagement();
-		if(gameover == false) {		// If the snake is always alive
-			moveSnake();
-			checkCollisions();
-			clearScreen();
-			refreshSnake();
-			if(foodCounter >= 10) {  // If no food during 10 movements, generate food
-				generateFood();
-				foodCounter = 0;
-			}
-			if(foodExists() == false) {
-				foodCounter++;
-			}
-			now = millis();
-		}	
+	if(snakeEnabled == true ) {
+		if(millis() - now >= animationTime){  // Do this only every <animationTime> ms (number box in the GUI)
+			keyboardManagement();
+			if(gameover == false) {		// If the snake is always alive
+				moveSnake();
+				checkCollisions();
+				clearScreen();
+				refreshSnake();
+				if(foodCounter >= 10) {  // If no food during 10 movements, generate food
+					generateFood();
+					foodCounter = 0;
+				}
+				if(foodExists() == false) {
+					foodCounter++;
+				}
+				now = millis();
+			}	
+		}
 	}
 }
 void checkCollisions() {
@@ -45,15 +46,6 @@ void resetSnake() {
 	createSnake();
 }
 void keyboardManagement() {
-	if(keyPressed == true && actionDone2 == false) {
-		if(key == '4') {
-			lengthenSnake();
-		}
-		else if(key == '5') {
-			generateFood();
-		}
-		actionDone2 = true;
-	}
 	if(nextDirection != -1) {
 		setSnakeDirection(nextDirection);
 		nextDirection = -1;
@@ -66,9 +58,9 @@ void gameOver() {
 	gameover = true;
 }
 void generateFood() {
-	foodPosx = int(random(0, 7));
-	foodPosy = int(random(0, 7));
-	foodPosz = int(random(0, 7));
+	foodPosx = int(random(0, dim));
+	foodPosy = int(random(0, dim));
+	foodPosz = int(random(0, dim));
 }
 void removeFood() {
 	foodPosx = -1;
@@ -86,7 +78,6 @@ void displayFood() {
 		led_value[foodPosx][foodPosy][foodPosz] = true;
 	}
 }
-
 void lengthenSnake() {
 int i=0,dir=0;
 while(spixel[i].checkExistence()) { // Look for the snake's tail
@@ -106,26 +97,26 @@ void refreshSnake() {
 		spixel[i].write();
 		i++;
 	}
-	readCurrentState();
 	displayFood();
+	readCurrentState();
 	if(mySerial.available()) {
 		mySerial.sendFrames();
 	}
 }
 void moveSnake() {
-	for(int i=99;i>=0;i--) {
+	for(int i=dim*dim*dim-1;i>=0;i--) {
 		if(spixel[i].checkExistence() == true){
 			spixel[i].move();
 		}
 	}
 }
 void initSnake() {
-	for(int i = 0; i<100; i++) {
+	for(int i = 0; i<pow(dim,3); i++) {
 		spixel[i] = new SnakePixel(i);
 	}
 }
 void createSnake() {
-	spixel[0].enable(int(random(0,8)), int(random(0,8)), int(random(0,8)), int(random(0,4)));
+	spixel[0].enable(int(random(0,dim)), int(random(0,dim)), int(random(0,dim)), int(random(0,5)));
 }
 void setSnakeDirection(int direction_) {
 	if(spixel[0].direction + 3 == direction_ || spixel[0].direction == direction_ + 3) {// Check if the direction change is possible (ex : up to down is impossible)
@@ -135,9 +126,9 @@ void setSnakeDirection(int direction_) {
 	}
 }
 void clearScreen() {
-	for(int i = 0; i<8; i++) {			// Clear the screen
-		for(int j = 0; j<8; j++) {
-			for(int k = 0; k<8; k++){
+	for(int i = 0; i<dim; i++) {			// Clear the screen
+		for(int j = 0; j<dim; j++) {
+			for(int k = 0; k<dim; k++){
 				led_value[i][j][k] = false;
 			}
 		}
@@ -173,27 +164,27 @@ class SnakePixel {
 			prevPosz = posz;
 			switch (direction) {
 				case 0 :	// up (+z)
-					if(posz < 7) { posz++; }
+					if(posz < dim-1) { posz++; }
 					else { posz = 0; }
 				break;
 				case 1 :	// right (+y)
-					if(posy < 7) { posy++; }
+					if(posy < dim-1) { posy++; }
 					else { posy = 0; }
 				break;
 				case 2 :	// forward (-x)
 					if(posx > 0) { posx--; }
-					else { posx = 7; }
+					else { posx = dim-1; }
 				break;
 				case 3 :	// down (-z)
 					if(posz > 0) { posz--; }
-					else { posz = 7; }
+					else { posz = dim-1; }
 				break;
 				case 4 :	// left (-y)
 					if(posy > 0) { posy--; }
-					else { posy = 7; }
+					else { posy = dim-1; }
 				break;
 				case 5 :	// backward (+x)
-					if(posx < 7) { posx++; }
+					if(posx < dim-1) { posx++; }
 					else { posx = 0; }
 				break;
 			}

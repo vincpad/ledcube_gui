@@ -22,11 +22,11 @@ void refreshCube() {
 }
 void drawSpheres() {
   sphereDetail(10);
-	spheres = new Sphere[512];
+	spheres = new Sphere[dim*dim*dim];
 	int id = 0;
-  	for (int i = 0; i < 8; ++i) {
-  	  for (int j = 0; j < 8; ++j) {
-  	    for (int k = 0; k < 8; ++k) {
+  	for (int i = 0; i < dim; ++i) {
+  	  for (int j = 0; j < dim; ++j) {
+  	    for (int k = 0; k < dim; ++k) {
   	      spheres[id] = new Sphere(
   	        id,                      // identifiant
   	        -dim*5+5+10*i ,  // position x
@@ -41,9 +41,9 @@ void drawSpheres() {
 }
 void fromIdToLed(int ledId) {
   int id = 0;
-  for (int i = 0; i < 8; ++i) {
-    for (int j = 0; j < 8; ++j) {
-      for (int k = 0; k < 8; ++k) {
+  for (int i = 0; i < dim; ++i) {
+    for (int j = 0; j < dim; ++j) {
+      for (int k = 0; k < dim; ++k) {
         if(ledId == id) {
           setLed(i, j, k, spheres[id].getState());
         }
@@ -55,9 +55,9 @@ void fromIdToLed(int ledId) {
 int fromLedToId(int x, int y, int z) {
   int l = 0;
   int id = 0;
-  for (int i = 0; i < 8 ; ++i) {
-    for (int j = 0; j < 8; ++j) {
-      for (int k = 0; k < 8; ++k) {
+  for (int i = 0; i < dim ; ++i) {
+    for (int j = 0; j < dim; ++j) {
+      for (int k = 0; k < dim; ++k) {
         if(i == x && j == y && k == z) {
           id = l;
         }
@@ -86,11 +86,11 @@ int bitWrite(int b, int p, boolean v) {  //Write a specific bit in a variable
   return r;
 }
 boolean[] generateArray() {
-  boolean[] a = new boolean[512];
+  boolean[] a = new boolean[dim*dim*dim];
   int n = 0;
-  for (int i = 0; i <= 7; ++i) {
-    for (int j = 0; j <= 7; ++j) {
-      for (int k = 0; k <= 7; ++k) {
+  for (int i = 0; i < dim; ++i) {
+    for (int j = 0; j < dim; ++j) {
+      for (int k = 0; k < dim; ++k) {
         a[n] = led_value[i][j][k];
         n++;
       }
@@ -100,9 +100,9 @@ boolean[] generateArray() {
 }
 void readArray(boolean[] array) {
   int n = 0;
-  for (int i = 0; i <= 7; ++i) {
-    for (int j = 0; j <= 7; ++j) {
-      for (int k = 0; k <= 7; ++k) {
+  for (int i = 0; i < dim; ++i) {
+    for (int j = 0; j < dim; ++j) {
+      for (int k = 0; k < dim; ++k) {
         spheres[fromLedToId(i,j,k)].forceState(array [n]);
         n++;
       }
@@ -110,9 +110,9 @@ void readArray(boolean[] array) {
   }
 }
 void readCurrentState() {
-  for (int i = 0; i <= 7; ++i) {
-    for (int j = 0; j <= 7; ++j) {
-      for (int k = 0; k <= 7; ++k) {
+  for (int i = 0; i < dim; ++i) {
+    for (int j = 0; j < dim; ++j) {
+      for (int k = 0; k < dim; ++k) {
         spheres[fromLedToId(i,j,k)].forceState(led_value[i][j][k]);
       }
     }
@@ -144,7 +144,7 @@ void setLed(int x, int y, int z, boolean state) {
 }
 void playAnimation() {
   if(playing == true) {
-    if(animCounter>=myFile.countLines()) {
+    if(animCounter>=myAnimFile.countLines()) {
       animCounter=0;
     }
     if(millis() - now >= animationTime){

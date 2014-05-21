@@ -6,7 +6,7 @@ int now;	//	Time variable for
 int animCounter = 0;	// Used for the animation management
 String displayedFrameLabel = "No frame selected";	// Label bisplayed on the up-left corner
 String serialPort;	// Current serial port name
-int previousSerialPortN, previousFrameN, selectedFrameN, displayedFrameN = -1; // Numbers ...
+int previousSerialPortN, previousFrameN, selectedFrameN = -1, displayedFrameN = -1; // Numbers ...
 boolean actionDone, actionDone2;	// No comment
 
 //	HUD objects
@@ -20,9 +20,9 @@ int zX = -60, zY = -60, zZ = 150;
 float zoomValue=1, rotx = PI/4, roty = PI/4;
 
 
-int dim = 8; // cube dimension
+static int dim = 8; // cube dimension
 
-File myFile = new File("test.txt");	// Object to manage animation file
+AnimFile myAnimFile = new AnimFile();	// Object to manage animation file
 
 Sphere[] spheres;	// Spheres objects making the 3D cube
 PGraphics buffer;	// Graphical buffer to do color-based 3D picking

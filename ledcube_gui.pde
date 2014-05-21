@@ -20,8 +20,8 @@ void setup() {
 }
 
 void draw() {
-  //snake();  // Uncomment for snake game mode 
-  refreshCube();
-  playAnimation();
-  refreshDisplayedText();
+  	snake();
+	refreshCube();
+  	playAnimation();
+  	refreshDisplayedText();
 }

@@ -16,7 +16,7 @@ class SerialComm extends PApplet{
     currentPort = new Serial(this, port, 115200);
     connected = true;
     portName = port;
-    println("Waiting 2 seconds for the cube initialization ...");
+    println("Waiting 2 seconds for the cube initialisation ...");
     delay(2000);
     sendFrames();
   }
@@ -42,7 +42,7 @@ class SerialComm extends PApplet{
     for (int i = 0; i <= 63; ++i) {
       currentPort.write(toSignedByte(sendBuffer[i]));
     }
-    /*for (int m = 0; m <= 63; ++m) {   // uncomment to see what is sended
+    /*for (int m = 0; m <= 63; ++m) {   // uncomment to see what is sent
       print(sendBuffer[m]);
       print(", ");
     }
