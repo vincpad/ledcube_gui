@@ -1,5 +1,13 @@
-ledcube_gui
-===========
+# ledcube_gui
+
+An advanced GUI to control a led cube
+
+## Requirements
+
+* Processing
+* ControlP5 library
+
+## Info
 
 This is a GUI displaying a cube in 3D and allowing the creation of animations by hand.
 
