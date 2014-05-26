@@ -1,84 +1,124 @@
-// Class to manage writing and reading of the frames in a text file
+// Class to handle an image array and an image file
+//
+// Part of ledcube_gui project : https://github.com/cybervinc/ledcube_gui
+//
 
 class AnimFile {
-  public String fileName;
+  String fileName;
+  ArrayList lines;
 
-  public AnimFile() {    // Init of the file name variable
-    fileName = null;   
+  public AnimFile() { // AnimFile constructor ...
+    lines = new ArrayList();
   }
-  public void changeFile(String fName) {
-    fileName = fName;
-  }
-  public boolean[] read(int lineNumber){    // Reading of a specific line, return an array with all values
-    if(lineNumber == -1 || fileName == null) {
-      println("No frame or file selected !");
-      boolean[] a = new boolean[dim*dim*dim];
-      return a;
-    }
-    else {
-      String[] lines = loadStrings(fileName);
-      boolean[] a = stringToArray(lines[lineNumber]);
-      return a;
-    }
-    
-  }
-  public int countLines() {
-    if(fileName != null) {
-      String[] lines = loadStrings(fileName);
-      return lines.length;
-    }
-    else {
-      println("No file selected !");
-      return -1;
-    }
-  }
-  public void erase(int lineNumber, boolean[] data){    // Erasing of a specific line, replace the line content with an array of values
-    if(fileName != null) {
-      String[] lines = loadStrings(fileName);
-      String d = arrayToString(data);
-      lines[lineNumber] = d;
-      saveStrings(fileName, lines);
-    } 
-    else {
-      println("No file selected !");
-    }
-  }
-  public void insert(int lineNumber){   // Insert a blank line and push all next lines
-    if(fileName != null) {
-      String[] lines = loadStrings(fileName);
-      String newLines[] = new String[lines.length + 1];
-      for(int i=0; i<lineNumber; i++){
-        newLines[i] = lines[i];
+  public void load(String f) {  // Load the file in an array
+    fileName = f;
+    int currentLine = 0;
+    String strLine;
+    String l = null;
+    try{
+      lines.clear();
+      BufferedReader br = new BufferedReader(new FileReader(fileName));
+      while ((strLine = br.readLine()) != null)   { //Read File Line By Line
+        lines.add(strLine);
       }
-      for(int i=lines.length-1; i>=lineNumber; i--){
-        newLines[i+1]=lines[i];
-      }
-      saveStrings(fileName, newLines);
-      boolean[] emptyArray = new boolean[dim*dim*dim];
-      for (int i = 0; i < pow(dim,3); ++i) {
-        emptyArray[i] = false;
-      }
-      erase(lineNumber, emptyArray);
+      br.close();
     }
-    else {
-      println("No file selected !");
+    catch (Exception e)  {  //Catch exception if any
+      System.err.println("Error : " + e.getMessage());  
     }
   }
-  public void remove(int lineNumber){   // Remove a line and push all next lines
-    if(fileName != null) {
-      String[] lines = loadStrings(fileName);
-      String newLines[] = new String[lines.length - 1];
-      for(int i=0; i<lineNumber; i++){
-        newLines[i] = lines[i];
+  public void write() {   // Write the array in the opened file
+    try{
+      //File fileName = new File(fileName);
+      BufferedWriter bw =  new BufferedWriter(new FileWriter(fileName));
+      for(int i=0; i<lines.size(); i++) {
+        bw.write(lines.get(i) + "\n");
       }
-      for(int i=lines.length-1; i>lineNumber; i--){
-        newLines[i-1]=lines[i];
-      }
-      saveStrings(fileName, newLines);
+      bw.close();
     }
-    else {
-      println("No file selected !");
+    catch (Exception e)  {  //Catch exception if any
+      System.err.println("Error : " + e.getMessage());
     }
+  }
+  public String readLine(int lineNumber) {  // Read a specific line and return its content (String)
+    String l = null;
+    try{
+      l = lines.get(lineNumber).toString();
+    }
+    catch (Exception e)  {  //Catch exception if any
+      System.err.println("Error : " + e.getMessage());
+    }
+    return l;
+  }
+  public boolean[] readLineB(int lineNumber) {  // Read a specific line and return its content (Boolean array)
+    String l = null;
+    try{
+      l = lines.get(lineNumber).toString();
+    }
+    catch (Exception e)  {  //Catch exception if any
+      System.err.println("Error : " + e.getMessage());
+    }
+    return stringToArray(l);
+  }
+  public void insertLine(int lineNumber) {  // Insert a blank line
+    try {
+      lines.add(lineNumber);
+    }
+    catch (Exception e)  {  //Catch exception if any
+      System.err.println("Error : " + e.getMessage());
+    }
+  }
+  public void writeLine(String data) {  // Add a line at the end of the array and write it with some data (String)
+    try {
+      lines.add(data);
+    }
+    catch (Exception e)  {  //Catch exception if any
+      System.err.println("Error : " + e.getMessage());
+    }
+  }
+  public void writeLine(int lineNumber, String data) {  // Replace a specific line in the array with some data (String)
+    try {
+      lines.set(lineNumber, data);
+    }
+    catch (Exception e)  {  //Catch exception if any
+      System.err.println("Error : " + e.getMessage());
+    }
+  }
+  public void writeLineB(boolean[] data) {  // Add a line at the end of the array and write it with some data (Boolean array)
+    String l = arrayToString(data);
+    try {
+      lines.add(l);
+    }
+    catch (Exception e)  {  //Catch exception if any
+      System.err.println("Error : " + e.getMessage());
+    }
+  }
+  public void writeLineB(int lineNumber, boolean[] data) {   // Replace a specific line in the array with some data (Boolean array)
+    String l = arrayToString(data);
+    try {
+      lines.set(lineNumber, l);
+    }
+    catch (Exception e)  {  //Catch exception if any
+      System.err.println("Error : " + e.getMessage());
+    }
+  }
+  public void removeLine(int lineNumber) {  // Delete a specific line
+    try {
+      lines.remove(lineNumber);
+    }
+    catch (Exception e)  {  //Catch exception if any
+      System.err.println("Error : " + e.getMessage());
+    }
+  }
+  public int numberOfLines() {  // Returns the current number of frames in the array
+    int n = 0;
+    try {
+      n = lines.size();
+    }
+    catch (Exception e)  {  //Catch exception if any
+      System.err.println("Error : " + e.getMessage());
+    }
+    return n;
   }
   public String arrayToString(boolean[] a) {   // Convert a boolean array to a string of 0 and 1, separated by commas
     String s = "";

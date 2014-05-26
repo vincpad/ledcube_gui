@@ -1,4 +1,8 @@
 //SNAKE 3D
+//
+// Part of ledcube_gui project : https://github.com/cybervinc/ledcube_gui
+//
+
 SnakePixel[] spixel = new SnakePixel[512];
 boolean created = false;
 int foodPosx=-1, foodPosy=-1, foodPosz=-1;

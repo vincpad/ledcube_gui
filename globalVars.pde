@@ -1,4 +1,7 @@
 // Global variables used by several functions
+//
+// Part of ledcube_gui project : https://github.com/cybervinc/ledcube_gui
+//
 
 boolean playing;	// True if animation is playing
 int animationTime;	// Time between 2 frames
@@ -22,9 +25,9 @@ float zoomValue=1, rotx = PI/4, roty = PI/4;
 
 static int dim = 8; // cube dimension
 
-AnimFile myAnimFile = new AnimFile();	// Object to manage animation file
+AnimFile myAnimFile;	// Object to manage animation file
 
-Sphere[] spheres;	// Spheres objects making the 3D cube
+Led[] leds;	// Spheres objects making the 3D cube
 PGraphics buffer;	// Graphical buffer to do color-based 3D picking
 
 SerialComm mySerial = new SerialComm();	// Object to manage the connection with the cube

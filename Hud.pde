@@ -1,4 +1,7 @@
 // HUD management
+//
+// Part of ledcube_gui project : https://github.com/cybervinc/ledcube_gui
+//
 
     void drawHud() {
         comPorts = cp5.addListBox("serialPorts")
@@ -122,9 +125,7 @@
                                  ;
         snakemode.setLabel("Snake mode");
     }
-
-
-    public void snakeMode() {
+public void snakeMode() {
     if(snakeEnabled == false) {
         snakemode.setLabel("Frame edit mode");
         snakeEnabled = true;
@@ -153,7 +154,7 @@ public void fileSelected(File selection) {
     println("Window was closed or you hit cancel.");
   } else {
     println("You selected " + selection.getAbsolutePath());
-    myAnimFile.changeFile(selection.getAbsolutePath());
+    myAnimFile.load(selection.getAbsolutePath());
     selectedFrameN = -1; 
     displayedFrameN = -1;
     updateFrameList();
@@ -162,18 +163,16 @@ public void fileSelected(File selection) {
 
 // Function triggered by the "New frame at the end" button
 public void newFrameAtTheEnd() {
-    int l = myAnimFile.countLines();
-    println(l);
-    myAnimFile.insert(l);
-    myAnimFile.erase(l, generateArray());
+    myAnimFile.writeLineB(generateArray());
     updateFrameList();
-    
+    myAnimFile.write();
 }
 
 // Function for updating the frame list after a frame removal or creation
 public void updateFrameList() {
     framelist.clear();
-    for (int i=0;i<=myAnimFile.countLines()-1;i++) {
+    delay(100);
+    for (int i=0;i<myAnimFile.numberOfLines();i++) {
         String item = "Frame " + String.valueOf(i+1);
         ListBoxItem frame = framelist.addItem(item, i);
         frame.setColorBackground(0xffff0000);
@@ -196,8 +195,7 @@ public void updateComPortsList() {
 
 // Function for displaying a frame by reading the selected frame line in the animation file, also triggered by the "Load frame" button
 public void loadFrame() {
-    readArray(myAnimFile.read(selectedFrameN));
-
+    readArray(myAnimFile.readLineB(selectedFrameN));
     if(mySerial.available()) {
         mySerial.sendFrames();
     }
@@ -205,16 +203,19 @@ public void loadFrame() {
 }
 // Driggered by the "Load frame" button
 public void insertBefore() {
-    myAnimFile.insert(selectedFrameN);
+    myAnimFile.insertLine(selectedFrameN);
     updateFrameList();
+    myAnimFile.write();
 }
 public void deleteFrame() {
-    myAnimFile.remove(selectedFrameN);
+    myAnimFile.removeLine(selectedFrameN);
     updateFrameList();
+    myAnimFile.write();
 }
 public void eraseFrame() {
-
-    myAnimFile.erase(selectedFrameN, generateArray());
+    myAnimFile.writeLineB(selectedFrameN, generateArray());
+    updateFrameList();
+    myAnimFile.write();
 }
 
 // Set the "Disconnect button" invisible if no port selected

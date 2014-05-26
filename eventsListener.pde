@@ -1,4 +1,7 @@
 // All that is triggered by events is here
+//
+// Part of ledcube_gui project : https://github.com/cybervinc/ledcube_gui
+//
 
 void mouseClicked() {
   // Draw the scene in the buffer to do color-based 3D picking
@@ -9,8 +12,8 @@ void mouseClicked() {
   buffer.rotateY(roty);
   buffer.rotateX(rotx);
   buffer.scale(zoomValue);
-  for (int i = 0; i < spheres.length; i++) {
-    spheres[i].drawBuffer(buffer);
+  for (int i = 0; i < leds.length; i++) {
+    leds[i].drawInBuffer(buffer);
   }
   buffer.endDraw();
  
@@ -21,7 +24,7 @@ void mouseClicked() {
   // If id >= 0 (background id = -1)
   if (id >= 0) {
     // change the cube color
-    spheres[id].changeState();
+    leds[id].toggleState();
     if(mySerial.available()) {
         mySerial.sendFrames();
     }
@@ -64,7 +67,7 @@ void controlEvent(ControlEvent theEvent) {
     if(theEvent.name().equals("frameList")) {
       int frameN = (int)theEvent.group().value();
   
-      if(previousFrameN >= 0){
+      if(previousFrameN >= 0 && previousFrameN < myAnimFile.numberOfLines()) {
         ListBoxItem oldframe = framelist.getItem(previousFrameN); //  get the previous item
         oldframe.setColorBackground(0xffff0000);  //  and restore its original background colors
       }

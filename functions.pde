@@ -1,4 +1,7 @@
 // Many functions, needs some triage
+//
+// Part of ledcube_gui project : https://github.com/cybervinc/ledcube_gui
+//
 
 color getColor(int id) {
   return -(id + 2);
@@ -15,43 +18,37 @@ void refreshCube() {
     rotateX(rotx);
     scale(zoomValue);
     drawaxes();
-    for (int i = 0; i < spheres.length; i++) {
-      spheres[i].display(this.g);
+    for (int i = 0; i < leds.length; i++) {
+      leds[i].display(this.g);
     }
     popMatrix();
 }
 void drawSpheres() {
   sphereDetail(10);
-	spheres = new Sphere[dim*dim*dim];
+	leds = new Led[dim*dim*dim];
 	int id = 0;
   	for (int i = 0; i < dim; ++i) {
   	  for (int j = 0; j < dim; ++j) {
   	    for (int k = 0; k < dim; ++k) {
-  	      spheres[id] = new Sphere(
-  	        id,                      // identifiant
-  	        -dim*5+5+10*i ,  // position x
-  	        -dim*5+5+10*j,  // position y
-  	        -dim*5+5+10*k,  // position z
-  	        2     // taille
-  	      );
+  	      leds[id] = new Led(id, -dim*5+5+10*i, -dim*5+5+10*j, -dim*5+5+10*k, 2, i, j, k);  
   	      id++;
   	    }
   	  } 
   	}
-}
+} /*
 void fromIdToLed(int ledId) {
   int id = 0;
   for (int i = 0; i < dim; ++i) {
     for (int j = 0; j < dim; ++j) {
       for (int k = 0; k < dim; ++k) {
         if(ledId == id) {
-          setLed(i, j, k, spheres[id].getState());
+          setLed(i, j, k, leds[id].getState());
         }
         id++;
       }
     }
   }
-}
+} */
 int fromLedToId(int x, int y, int z) {
   int l = 0;
   int id = 0;
@@ -103,17 +100,22 @@ void readArray(boolean[] array) {
   for (int i = 0; i < dim; ++i) {
     for (int j = 0; j < dim; ++j) {
       for (int k = 0; k < dim; ++k) {
-        spheres[fromLedToId(i,j,k)].forceState(array [n]);
+        leds[fromLedToId(i,j,k)].forceState(array [n]);
         n++;
       }
     } 
+  }
+}
+void clearCube() {
+  for(int i=0; i<pow(dim,3); i++) {
+    leds[i].forceState(false);
   }
 }
 void readCurrentState() {
   for (int i = 0; i < dim; ++i) {
     for (int j = 0; j < dim; ++j) {
       for (int k = 0; k < dim; ++k) {
-        spheres[fromLedToId(i,j,k)].forceState(led_value[i][j][k]);
+        leds[fromLedToId(i,j,k)].forceState(led_value[i][j][k]);
       }
     }
   }
@@ -144,7 +146,7 @@ void setLed(int x, int y, int z, boolean state) {
 }
 void playAnimation() {
   if(playing == true) {
-    if(animCounter>=myAnimFile.countLines()) {
+    if(animCounter>=myAnimFile.numberOfLines()) {
       animCounter=0;
     }
     if(millis() - now >= animationTime){
