@@ -1,22 +1,10 @@
-// Class to manage and display the HUD
+// HUD management
 //
 // Part of ledcube_gui project : https://github.com/cybervinc/ledcube_gui
 //
-
-class Hud extends PGraphics{
-	PApplet applet;
-	PGraphics disp;
-
-	ControlP5 cp5;
-	ListBox comPorts, framelist;
-	Button loadfile, disconnectb, loadframe, insertbefore, newframeattheend, deleteframe, eraseframe, playbutton, stopbutton, updateports, snakemode;
-	Numberbox animationspeed;
-
-	public Hud(PApplet applet_) {	// initialize the HUD
-		applet = applet_;
-		disp = applet_.g;
-		cp5 = new ControlP5(applet);
-		comPorts = cp5.addListBox("serialPorts")
+/*
+    void drawHud() {
+        comPorts = cp5.addListBox("serialPorts")
                  .setPosition(1080, 50)
                  .setSize(120, 100)
                  .setItemHeight(15)
@@ -136,66 +124,153 @@ class Hud extends PGraphics{
                                  .setColorForeground(color(255, 100,0))
                                  ;
         snakemode.setLabel("Snake mode");
-	}
-	
-	// Function for updating the com ports list list after a serial connection/disconnection, also triggered by the "Update list" button
-	public void updateComPortsList() {
-	    comPorts.clear();
-	    for (int i=0;i<Serial.list().length;i++) {
-	        ListBoxItem port = comPorts.addItem(Serial.list()[i], i);
-	        if(Serial.list()[i].equals(mySerial.getPortName())) {
-	            port.setColorBackground(0xff00ff00);
-	        }
-	        else {
-	            port.setColorBackground(0xffff0000);
-	        }
-	    }
-	}
-
-	// Function for updating the frame list after a frame removal or creation
-  	public void updateFrameList() {
-      	framelist.clear();
-      	delay(100);
-      	for (int i=0;i<myAnimFile.numberOfLines();i++) {
-          	String item = "Frame " + String.valueOf(i+1);
-          	ListBoxItem frame = framelist.addItem(item, i);
-          	frame.setColorBackground(0xffff0000);
-      	}
-  	}
-	
-	// Set the "Disconnect button" invisible if no port selected
-	public void updateDisconnectButton() {
-	    if(mySerial.available()) {
-	        disconnectb.setVisible(true);
-	    }
-	    else {
-	        disconnectb.setVisible(false);
-	    } 
-	}
-
-	public void refreshDisplayedText() {
-	    displayedFrameLabel = "";
-	    if(myAnimFile.fileName != null) {
-	        displayedFrameLabel = "File :" + myAnimFile.fileName;
-	    }
-	    else {
-	        displayedFrameLabel = "No file selected";
-	        displayedFrameN = -1;
-	    }
-	    if(displayedFrameN != -1) {
-	        displayedFrameLabel = displayedFrameLabel + "   -    Frame " + String.valueOf(displayedFrameN + 1);
-	    }
-	    if(snakeEnabled == true) {
-	        displayedFrameLabel = "Playing snake !";
-	    }
-	    PFont f = createFont("Georgia", 24);
-      	disp.textFont(f);
-	    disp.textSize(10);
-	    disp.fill(255);
-	    disp.text(displayedFrameLabel, 20, 20);
-	}
-
-	public void updatePorts() {
-	    updateComPortsList();
-	}
+    }
+public void snakeMode() {
+    if(snakeEnabled == false) {
+        snakemode.setLabel("Frame edit mode");
+        snakeEnabled = true;
+    }
+    else if(snakeEnabled == true) {
+        snakeEnabled = false;
+        snakemode.setLabel("Snake mode");
+    }
 }
+    // Function triggered by the "disconnect" button
+public void disconnect() {
+    mySerial.disconnect();
+    println("Disconnected from "+ mySerial.getPortName());
+    updateComPortsList();
+    updateDisconnectButton();
+}
+
+// Function triggered by the "load file" button
+public void loadFile() {
+    selectInput("Select an animation file or an empty one", "fileSelected");
+}
+
+// Function triggered by the loadFile function
+public void fileSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or you hit cancel.");
+  } else {
+    println("You selected " + selection.getAbsolutePath());
+    myAnimFile.load(selection.getAbsolutePath());
+    selectedFrameN = -1; 
+    displayedFrameN = -1;
+    updateFrameList();
+  }
+}
+
+// Function triggered by the "New frame at the end" button
+public void newFrameAtTheEnd() {
+    myAnimFile.writeLineB(generateArray());
+    updateFrameList();
+    myAnimFile.write();
+}
+
+// Function for updating the frame list after a frame removal or creation
+public void updateFrameList() {
+    framelist.clear();
+    delay(100);
+    for (int i=0;i<myAnimFile.numberOfLines();i++) {
+        String item = "Frame " + String.valueOf(i+1);
+        ListBoxItem frame = framelist.addItem(item, i);
+        frame.setColorBackground(0xffff0000);
+    }
+}
+
+// Function for updating the com ports list list after a serial connection/disconnection, also triggered by the "Update list" button
+public void updateComPortsList() {
+    comPorts.clear();
+    for (int i=0;i<Serial.list().length;i++) {
+        ListBoxItem port = comPorts.addItem(Serial.list()[i], i);
+        if(Serial.list()[i].equals(mySerial.getPortName())) {
+            port.setColorBackground(0xff00ff00);
+        }
+        else {
+            port.setColorBackground(0xffff0000);
+        }
+    }
+}
+
+// Function for displaying a frame by reading the selected frame line in the animation file, also triggered by the "Load frame" button
+public void loadFrame() {
+    readArray(myAnimFile.readLineB(selectedFrameN));
+    if(mySerial.available()) {
+        mySerial.sendFrames();
+    }
+    displayedFrameN = selectedFrameN;
+}
+// Triggered by the "Load frame" button
+public void insertBefore() {
+    myAnimFile.insertLine(selectedFrameN);
+    myAnimFile.writeLineB(selectedFrameN, new boolean[int(pow(myCube.getSize(), 3))]);  // Fill the frame with a blank boolean array
+    updateFrameList();
+    myAnimFile.write();
+}
+public void deleteFrame() {
+    myAnimFile.removeLine(selectedFrameN);
+    updateFrameList();
+    myAnimFile.write();
+}
+public void eraseFrame() {
+    myAnimFile.writeLineB(selectedFrameN, generateArray());
+    updateFrameList();
+    myAnimFile.write();
+}
+
+// Set the "Disconnect button" invisible if no port selected
+public void updateDisconnectButton() {
+    if(mySerial.available()) {
+        disconnectb.setVisible(true);
+    }
+    else {
+        disconnectb.setVisible(false);
+    } 
+}
+
+public void animationSpeed(int spd) {
+    animationTime = spd;
+}
+
+public void playButton() {
+    if(playing == false) {
+        playing = true;
+        playbutton.setLabel("Pause (P)");
+    }
+    else if(playing == true) {
+        playing = false;
+        playbutton.setLabel("Play (P)");
+    }
+}
+public void stopButton() {
+    playing = false;
+    animCounter = 0;
+    playbutton.setLabel("Play (P)");
+}
+public void refreshDisplayedText() {
+    displayedFrameLabel = "";
+    if(myAnimFile.fileName != null) {
+        displayedFrameLabel = "File :" + myAnimFile.fileName;
+    }
+    else {
+        displayedFrameLabel = "No file selected";
+        displayedFrameN = -1;
+    }
+
+    if(displayedFrameN != -1) {
+        displayedFrameLabel = displayedFrameLabel + "   -    Frame " + String.valueOf(displayedFrameN + 1);
+    }
+
+    if(snakeEnabled == true) {
+        displayedFrameLabel = "Playing snake !";
+    }
+    textSize(10);
+    fill(255);
+    text(displayedFrameLabel, 20, 20);
+
+}
+
+public void updatePorts() {
+    updateComPortsList();
+}*/

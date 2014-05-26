@@ -12,13 +12,13 @@ int previousSerialPortN, previousFrameN, selectedFrameN = -1, displayedFrameN = 
 boolean actionDone, actionDone2;	// No comment
 
 //	HUD objects
-ControlP5 cp5;	// Object to manage HUD
+/*ControlP5 cp5;	// Object to manage HUD
 ListBox comPorts, framelist;
 Button loadfile, disconnectb, loadframe, insertbefore, newframeattheend, deleteframe, eraseframe, playbutton, stopbutton, updateports, snakemode;
 Numberbox animationspeed;
 
 
-
+*/
 
 
 

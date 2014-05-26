@@ -33,7 +33,7 @@ class SerialComm extends PApplet{
       for(int j=0;j<myCube.getSize();j++){
         int toSend = 0;
         for(int k=0;k<myCube.getSize();k++){
-          toSend = bitWrite(toSend, k, myCube.getLedState(i,j,k));
+          toSend = bitWrite(toSend, k, myCube.getLedState(j,i,k));
         }
         sendBuffer[n] = toSend;
         n++;

@@ -28,15 +28,15 @@ void controlEvent(ControlEvent theEvent) {
       int serialPortN = (int)theEvent.group().value();  // get the serial port number in the list
   
       if(previousSerialPortN >= 0){
-        ListBoxItem previousPort = comPorts.getItem(previousSerialPortN); //  get the previous item
+        ListBoxItem previousPort = myHud.comPorts.getItem(previousSerialPortN); //  get the previous item
         previousPort.setColorBackground(0xffff0000);  //  and restore its original background colors
       }
       previousSerialPortN = serialPortN;  //  update the selected index
-      comPorts.getItem(serialPortN).setColorBackground(color(100, 128));  //  and set the background color to be the active/'selected one'
+      myHud.comPorts.getItem(serialPortN).setColorBackground(color(100, 128));  //  and set the background color to be the active/'selected one'
       String serialPort = Serial.list()[serialPortN];  // get the serial port name
       mySerial.connect(serialPort); // connect to this port
-      updateComPortsList(); // update the ports list
-      updateDisconnectButton(); // update the disconnect button
+      myHud.updateComPortsList(); // update the ports list
+      myHud.updateDisconnectButton(); // update the disconnect button
       println("Connected to " + mySerial.getPortName());
     }
     // if the event happen in the frames list
@@ -44,11 +44,11 @@ void controlEvent(ControlEvent theEvent) {
       int frameN = (int)theEvent.group().value();
   
       if(previousFrameN >= 0 && previousFrameN < myAnimFile.numberOfLines()) {
-        ListBoxItem oldframe = framelist.getItem(previousFrameN); //  get the previous item
+        ListBoxItem oldframe = myHud.framelist.getItem(previousFrameN); //  get the previous item
         oldframe.setColorBackground(0xffff0000);  //  and restore its original background colors
       }
       previousFrameN = frameN;  //  update the selected index
-      framelist.getItem(frameN).setColorBackground(color(100, 128));//  and set the bg colour to be the active/'selected one'
+      myHud.framelist.getItem(frameN).setColorBackground(color(100, 128));//  and set the bg colour to be the active/'selected one'
       selectedFrameN = frameN;  // set the global variable "selectedFrameN"
       println("Frame selected: " + frameN);
     }
