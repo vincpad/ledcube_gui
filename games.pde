@@ -18,7 +18,7 @@ void snake() {
 			if(gameover == false) {		// If the snake is always alive
 				moveSnake();
 				checkCollisions();
-				clearScreen();
+				myCube.clear();
 				refreshSnake();
 				if(foodCounter >= 10) {  // If no food during 10 movements, generate food
 					generateFood();
@@ -62,9 +62,9 @@ void gameOver() {
 	gameover = true;
 }
 void generateFood() {
-	foodPosx = int(random(0, dim));
-	foodPosy = int(random(0, dim));
-	foodPosz = int(random(0, dim));
+	foodPosx = int(random(0, myCube.getSize()));
+	foodPosy = int(random(0, myCube.getSize()));
+	foodPosz = int(random(0, myCube.getSize()));
 }
 void removeFood() {
 	foodPosx = -1;
@@ -79,7 +79,7 @@ boolean foodExists() {
 }
 void displayFood() {
 	if(foodExists()) {
-		led_value[foodPosx][foodPosy][foodPosz] = true;
+		myCube.setLed(foodPosx, foodPosy, foodPosz, true);
 	}
 }
 void lengthenSnake() {
@@ -102,40 +102,30 @@ void refreshSnake() {
 		i++;
 	}
 	displayFood();
-	readCurrentState();
 	if(mySerial.available()) {
 		mySerial.sendFrames();
 	}
 }
 void moveSnake() {
-	for(int i=dim*dim*dim-1;i>=0;i--) {
+	for(int i=int(pow(myCube.getSize(), 3))-1;i>=0;i--) {
 		if(spixel[i].checkExistence() == true){
 			spixel[i].move();
 		}
 	}
 }
 void initSnake() {
-	for(int i = 0; i<pow(dim,3); i++) {
+	for(int i = 0; i<pow(myCube.getSize(),3); i++) {
 		spixel[i] = new SnakePixel(i);
 	}
 }
 void createSnake() {
-	spixel[0].enable(int(random(0,dim)), int(random(0,dim)), int(random(0,dim)), int(random(0,5)));
+	spixel[0].enable(int(random(0,myCube.getSize())), int(random(0,myCube.getSize())), int(random(0,myCube.getSize())), int(random(0,5)));
 }
 void setSnakeDirection(int direction_) {
 	if(spixel[0].direction + 3 == direction_ || spixel[0].direction == direction_ + 3) {// Check if the direction change is possible (ex : up to down is impossible)
 	}
 	else {
 		spixel[0].setDirection(direction_);
-	}
-}
-void clearScreen() {
-	for(int i = 0; i<dim; i++) {			// Clear the screen
-		for(int j = 0; j<dim; j++) {
-			for(int k = 0; k<dim; k++){
-				led_value[i][j][k] = false;
-			}
-		}
 	}
 }
 class SnakePixel {
@@ -168,27 +158,27 @@ class SnakePixel {
 			prevPosz = posz;
 			switch (direction) {
 				case 0 :	// up (+z)
-					if(posz < dim-1) { posz++; }
+					if(posz < myCube.getSize()-1) { posz++; }
 					else { posz = 0; }
 				break;
 				case 1 :	// right (+y)
-					if(posy < dim-1) { posy++; }
+					if(posy < myCube.getSize()-1) { posy++; }
 					else { posy = 0; }
 				break;
 				case 2 :	// forward (-x)
 					if(posx > 0) { posx--; }
-					else { posx = dim-1; }
+					else { posx = myCube.getSize()-1; }
 				break;
 				case 3 :	// down (-z)
 					if(posz > 0) { posz--; }
-					else { posz = dim-1; }
+					else { posz = myCube.getSize()-1; }
 				break;
 				case 4 :	// left (-y)
 					if(posy > 0) { posy--; }
-					else { posy = dim-1; }
+					else { posy = myCube.getSize()-1; }
 				break;
 				case 5 :	// backward (+x)
-					if(posx < dim-1) { posx++; }
+					if(posx < myCube.getSize()-1) { posx++; }
 					else { posx = 0; }
 				break;
 			}
@@ -209,7 +199,7 @@ class SnakePixel {
 		turning = false;
 	}
 	public void write() {
-		led_value[posx][posy][posz] = true;
+		setLed(posx,posy,posz,true);
 	}
 	public boolean checkExistence() {
 		return exists;

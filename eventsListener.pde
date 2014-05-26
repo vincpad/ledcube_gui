@@ -11,14 +11,12 @@ void mouseClicked() {
 // Triggered when mouse wheel is used
 void mouseWheel(MouseEvent event) {
   float e = event.getAmount();
-  zoomValue=zoomValue+0.01*e; // Update scene size values (zoom)
+  myCube.zoom(e); // Update scene size values (zoom)
 } 
 // Triggered when mouse is dragged
 void mouseDragged() {
-  float rate = 0.01;
   if(mouseX<1080) { // Not in the HUD zone (to avoid cube rotation when slide the frames list for example)
-    rotx += (pmouseY-mouseY) * rate;  // Update scene rotation values
-    roty += (mouseX-pmouseX) * rate;
+      myCube.applyRot();
   }
 }
 // Triggered when clicking on a list object

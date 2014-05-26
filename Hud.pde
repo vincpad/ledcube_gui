@@ -201,9 +201,10 @@ public void loadFrame() {
     }
     displayedFrameN = selectedFrameN;
 }
-// Driggered by the "Load frame" button
+// Triggered by the "Load frame" button
 public void insertBefore() {
     myAnimFile.insertLine(selectedFrameN);
+    myAnimFile.writeLineB(selectedFrameN, new boolean[int(pow(myCube.getSize(), 3))]);  // Fill the frame with a blank boolean array
     updateFrameList();
     myAnimFile.write();
 }

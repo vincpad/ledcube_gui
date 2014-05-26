@@ -8,15 +8,15 @@ import processing.serial.*;
 import processing.opengl.*;
 import controlP5.*;
 import java.io.*; 
-LedCube myCube;
+
 
 void setup() {
 	size(1200, 800, OPENGL);
-	sphereDetail(10);
 	cp5 = new ControlP5(this);
 	myAnimFile = new AnimFile();
-	myCube = new LedCube(dim, this);
-	noStroke();
+	myCube = new LedCube(cubeSize, this);
+	mySerial = new SerialComm();
+	//noStroke();
 	frameRate(30);
 		
 	drawHud();

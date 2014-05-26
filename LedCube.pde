@@ -5,16 +5,25 @@
 
 class LedCube extends PGraphics{
 	int dim;
+
+  //  Camera settings
+  int zX = -60, zY = -60, zZ = 150;
+  float zoomValue=1, rotx = PI/4, roty = PI/4;
+
   PGraphics disp;
   PApplet applet;
   PGraphics buffer; // Graphical buffer to do color-based 3D picking
 
-	public LedCube(int dim_, PApplet applet_) {	// creating the Led objects to draw the cube
-		this.dim = dim_;
-    this.disp = applet_.g;
-    this.applet = applet_;
+  Led[] leds; // Leds making the 3D cube
+  boolean[][][] led_value;  // 3 dimensional array to store all leds state
 
+	public LedCube(int dim_, PApplet applet_) {	// creating the Led objects to draw the cube
+		dim = dim_;
+    disp = applet_.g;
+    applet = applet_;
+    led_value = new boolean[dim][dim][dim]; 
 		leds = new Led[dim*dim*dim];
+    disp.sphereDetail(10);
 		int id = 0;
   		for (int i = 0; i < dim; ++i) {
   		  for (int j = 0; j < dim; ++j) {
@@ -28,7 +37,7 @@ class LedCube extends PGraphics{
 
       buffer = createGraphics(applet.width, applet.height, P3D);
 	}
-	public void refresh() {
+	public void refresh() {  // refresh the cube display
 		disp.pushMatrix();
     	disp.camera(zX, zY, zZ, 0, 0, 0, 0, 1, 0);
     	disp.lights();
@@ -42,16 +51,16 @@ class LedCube extends PGraphics{
     	}
     	disp.popMatrix();
 	} 
-	public void clear() {
+	public void clear() {  // setting off all leds
 		for (int i = 0; i < dim; ++i) {
     		for (int j = 0; j < dim; ++j) {
       			for (int k = 0; k < dim; ++k) {
-        			leds[fromLedToId(i,j,k)].forceState(false);
+        			led_value[i][j][k] = false;
       			}
     		}
   		}
 	}
-	public void drawaxes(){
+	private  void drawaxes(){  // drawing the X,Y,Z axis
     	int val = -dim*5+5;
       PFont f = createFont("Georgia", 24);
       disp.textFont(f);
@@ -73,10 +82,10 @@ class LedCube extends PGraphics{
     	disp.text("Z",val,val,-val+15);
     	disp.noStroke();
 	}
-	public int getDim() {
+	public int getSize() { // return the cube size
 		return dim;
 	}
-  public void drawInBuffer() {
+  public void drawInBuffer() {  
     // Draw the scene in the buffer to do color-based 3D picking
     buffer.beginDraw();
     buffer.background(getColor(-1)); // since background is not an object, its id is -1
@@ -103,7 +112,23 @@ class LedCube extends PGraphics{
       }
     } 
   }
-  public void setLed(int x, int y, int z, int state) {
-    
+  public void setLed(int x, int y, int z, boolean state) {
+    led_value[x][y][z] = state;
+  }
+  public boolean getLedState(int x, int y, int z) {
+    return led_value[x][y][z];
+  }
+  public int getId(color c) {
+    return -(c + 2);
+  }
+  public color getColor(int id) {
+    return -(id + 2);
+  }
+  public void zoom(float value) {
+    zoomValue=zoomValue+0.04*value;
+  }
+  public void applyRot() {
+    rotx += (applet.pmouseY-applet.mouseY) * 0.01;
+    roty += -(applet.pmouseX-applet.mouseX) * 0.01;
   }
 }

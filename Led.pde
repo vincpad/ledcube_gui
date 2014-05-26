@@ -9,34 +9,32 @@ class Led {
   int id;                 // id
   int ledX, ledY, ledZ;   // correspondence with the cube leds
   int x3d, y3d, z3d, w3d; // position in the cube drawn (x, y, z) and width (w)
-  boolean state;          // state
- 
+  
   // constructor
   public Led(int id, int x3d, int y3d, int z3d, int w3d, int ledX, int ledY, int ledZ) {
     this.id = id;
     this.x3d = x3d; this.y3d = y3d; this.z3d = z3d; this.w3d = w3d;
     this.ledX = ledX; this.ledY = ledY; this.ledZ = ledZ;
-    state = false;
+
   }
   public void toggleState() {
-    if(state == false) {
+    if(myCube.led_value[ledX][ledY][ledZ] == false) {
       forceState(true);
     }
     else {
       forceState(false);
     }  
   }
-  public void forceState(boolean s) {
-    state = s;
-    led_value[ledX][ledY][ledZ] = state;
+  public void forceState(boolean state) {
+    myCube.led_value[ledX][ledY][ledZ] = state;
   }
 
   // display the cube on screen
   public void display(PGraphics scrn) {
-    if(state == false) {
+    if(myCube.led_value[ledX][ledY][ledZ] == false) {
       scrn.fill(color(255));
     }
-    if(state == true) {
+    if(myCube.led_value[ledX][ledY][ledZ] == true) {
       scrn.fill(color(0,0,255));
     }
     draw(scrn);
@@ -44,7 +42,7 @@ class Led {
  
   // draw the cube in the buffer
   public void drawInBuffer(PGraphics buffer) {
-    color idColor = getColor(id);
+    color idColor = myCube.getColor(id);
     buffer.fill(idColor);
     draw(buffer);
   }
@@ -54,9 +52,8 @@ class Led {
       g.translate(x3d, y3d, z3d);
       g.sphere(w3d);
     g.popMatrix();
-  }
-  
+  } 
   public boolean getState() {
-    return state;
+    return myCube.led_value[ledX][ledY][ledZ];
   }
 }

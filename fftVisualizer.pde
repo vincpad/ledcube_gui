@@ -47,7 +47,7 @@ void fftVisualizer() {
           if(value[n] == 0) {
             state = false;
           }
-          leds[fromLedToId(i,j,k-1)].forceState(state);
+          myCube.setLed(i,j,k-1,state);
         }
         n++;
       }
