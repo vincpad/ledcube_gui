@@ -32,7 +32,7 @@ void fileSelected2(File selection) {
 void fftVisualizer() {
   if(fileselected == true) {
     fft.forward(jingle.mix);
-    clearCube();
+    myCube.clear();
     int n = 0;
     for(int i = 0; i < 8; i++) {
       for(int j = 0; j < 8; j++) {

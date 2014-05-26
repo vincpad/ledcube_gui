@@ -138,7 +138,7 @@ public void snakeMode() {
     // Function triggered by the "disconnect" button
 public void disconnect() {
     mySerial.disconnect();
-    println("Disconnected from "+ serialPort);
+    println("Disconnected from "+ mySerial.getPortName());
     updateComPortsList();
     updateDisconnectButton();
 }

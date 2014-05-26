@@ -8,7 +8,6 @@ int animationTime;	// Time between 2 frames
 int now;	//	Time variable for 
 int animCounter = 0;	// Used for the animation management
 String displayedFrameLabel = "No frame selected";	// Label bisplayed on the up-left corner
-String serialPort;	// Current serial port name
 int previousSerialPortN, previousFrameN, selectedFrameN = -1, displayedFrameN = -1; // Numbers ...
 boolean actionDone, actionDone2;	// No comment
 
@@ -28,7 +27,7 @@ static int dim = 8; // cube dimension
 AnimFile myAnimFile;	// Object to manage animation file
 
 Led[] leds;	// Spheres objects making the 3D cube
-PGraphics buffer;	// Graphical buffer to do color-based 3D picking
+
 
 SerialComm mySerial = new SerialComm();	// Object to manage the connection with the cube
 

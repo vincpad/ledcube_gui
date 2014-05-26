@@ -5,30 +5,8 @@
 
 void mouseClicked() {
   // Draw the scene in the buffer to do color-based 3D picking
-  buffer.beginDraw();
-  buffer.background(getColor(-1)); // since background is not an object, its id is -1
-  buffer.noStroke();
-  buffer.camera(zX, zY, zZ, 0, 0, 0, 0, 1, 0);  // Create camera in the buffer, with the same settings as GUI
-  buffer.rotateY(roty);
-  buffer.rotateX(rotx);
-  buffer.scale(zoomValue);
-  for (int i = 0; i < leds.length; i++) {
-    leds[i].drawInBuffer(buffer);
-  }
-  buffer.endDraw();
- 
-  // Get the pixel color under the mouse
-  color pick = buffer.get(mouseX, mouseY);
-  // Get object id
-  int id = getId(pick);
-  // If id >= 0 (background id = -1)
-  if (id >= 0) {
-    // change the cube color
-    leds[id].toggleState();
-    if(mySerial.available()) {
-        mySerial.sendFrames();
-    }
-  }
+  myCube.drawInBuffer();
+  myCube.do3dPicking();
 }
 // Triggered when mouse wheel is used
 void mouseWheel(MouseEvent event) {
@@ -57,11 +35,11 @@ void controlEvent(ControlEvent theEvent) {
       }
       previousSerialPortN = serialPortN;  //  update the selected index
       comPorts.getItem(serialPortN).setColorBackground(color(100, 128));  //  and set the background color to be the active/'selected one'
-      serialPort = Serial.list()[serialPortN];  // get the serial port name
+      String serialPort = Serial.list()[serialPortN];  // get the serial port name
       mySerial.connect(serialPort); // connect to this port
       updateComPortsList(); // update the ports list
       updateDisconnectButton(); // update the disconnect button
-      println("Connected to "+serialPort);
+      println("Connected to " + mySerial.getPortName());
     }
     // if the event happen in the frames list
     if(theEvent.name().equals("frameList")) {
@@ -74,7 +52,7 @@ void controlEvent(ControlEvent theEvent) {
       previousFrameN = frameN;  //  update the selected index
       framelist.getItem(frameN).setColorBackground(color(100, 128));//  and set the bg colour to be the active/'selected one'
       selectedFrameN = frameN;  // set the global variable "selectedFrameN"
-      println("Frame selected: "+frameN);
+      println("Frame selected: " + frameN);
     }
   }
 }

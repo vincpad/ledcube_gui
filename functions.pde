@@ -9,46 +9,7 @@ color getColor(int id) {
 int getId(color c) {
   return -(c + 2);
 }
-void refreshCube() {
-  pushMatrix();
-    camera(zX, zY, zZ, 0, 0, 0, 0, 1, 0);
-    lights();
-    background(100);
-    rotateY(roty);
-    rotateX(rotx);
-    scale(zoomValue);
-    drawaxes();
-    for (int i = 0; i < leds.length; i++) {
-      leds[i].display(this.g);
-    }
-    popMatrix();
-}
-void drawSpheres() {
-  sphereDetail(10);
-	leds = new Led[dim*dim*dim];
-	int id = 0;
-  	for (int i = 0; i < dim; ++i) {
-  	  for (int j = 0; j < dim; ++j) {
-  	    for (int k = 0; k < dim; ++k) {
-  	      leds[id] = new Led(id, -dim*5+5+10*i, -dim*5+5+10*j, -dim*5+5+10*k, 2, i, j, k);  
-  	      id++;
-  	    }
-  	  } 
-  	}
-} /*
-void fromIdToLed(int ledId) {
-  int id = 0;
-  for (int i = 0; i < dim; ++i) {
-    for (int j = 0; j < dim; ++j) {
-      for (int k = 0; k < dim; ++k) {
-        if(ledId == id) {
-          setLed(i, j, k, leds[id].getState());
-        }
-        id++;
-      }
-    }
-  }
-} */
+
 int fromLedToId(int x, int y, int z) {
   int l = 0;
   int id = 0;
@@ -106,11 +67,6 @@ void readArray(boolean[] array) {
     } 
   }
 }
-void clearCube() {
-  for(int i=0; i<pow(dim,3); i++) {
-    leds[i].forceState(false);
-  }
-}
 void readCurrentState() {
   for (int i = 0; i < dim; ++i) {
     for (int j = 0; j < dim; ++j) {
@@ -119,26 +75,6 @@ void readCurrentState() {
       }
     }
   }
-}
-void drawaxes(){
-    int val = -dim*5+5;
-    textSize(10);
-    stroke(255,0,0);
-    fill(255);
-    line(val, val, val, -val+10, val, val);
-    line(val, val, val, val, -val+10, val);
-    line(-val+10,val,val,-val+5,val,val-2);
-    line(-val+10,val,val,-val+5,val,val+2);
-    line(val,-val+10,val,val,-val+5,val-2);
-    line(val,-val+10,val,val,-val+5,val+2);
-    text("Y",-val+15,val,val);
-    text("X",val,-val+15,val);
-    stroke(0,255,0);
-    line(val, val, val, val, val, -val+10);
-    line(val,val,-val+10,val-2,val,-val+5);
-    line(val,val,-val+10,val+2,val,-val+5);
-    text("Z",val,val,-val+15);
-    noStroke();
 }
 void setLed(int x, int y, int z, boolean state) {
   

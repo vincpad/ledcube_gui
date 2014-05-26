@@ -8,15 +8,17 @@ import processing.serial.*;
 import processing.opengl.*;
 import controlP5.*;
 import java.io.*; 
+LedCube myCube;
 
 void setup() {
 	size(1200, 800, OPENGL);
+	sphereDetail(10);
 	cp5 = new ControlP5(this);
 	myAnimFile = new AnimFile();
+	myCube = new LedCube(dim, this);
 	noStroke();
 	frameRate(30);
-	buffer = createGraphics(width, height, P3D);
-	drawSpheres();
+		
 	drawHud();
 	initSnake();
 	createSnake();
@@ -26,7 +28,7 @@ void setup() {
 void draw() {
 	//fftVisualizer();	// uncomment to enable audio visualizer
   	snake();
-	refreshCube();
+	myCube.refresh();
   	playAnimation();
   	refreshDisplayedText();
 }
