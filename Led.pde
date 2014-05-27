@@ -18,7 +18,7 @@ class Led {
 
   }
   public void toggleState() {
-    if(myCube.led_value[ledX][ledY][ledZ] == false) {
+    if(led_value[ledX][ledY][ledZ] == false) {
       forceState(true);
     }
     else {
@@ -26,15 +26,15 @@ class Led {
     }  
   }
   public void forceState(boolean state) {
-    myCube.led_value[ledX][ledY][ledZ] = state;
+    led_value[ledX][ledY][ledZ] = state;
   }
 
   // display the cube on screen
   public void display(PGraphics scrn) {
-    if(myCube.led_value[ledX][ledY][ledZ] == false) {
+    if(led_value[ledX][ledY][ledZ] == false) {
       scrn.fill(color(255));
     }
-    if(myCube.led_value[ledX][ledY][ledZ] == true) {
+    if(led_value[ledX][ledY][ledZ] == true) {
       scrn.fill(color(0,0,255));
     }
     draw(scrn);
@@ -54,6 +54,6 @@ class Led {
     g.popMatrix();
   } 
   public boolean getState() {
-    return myCube.led_value[ledX][ledY][ledZ];
+    return led_value[ledX][ledY][ledZ];
   }
 }

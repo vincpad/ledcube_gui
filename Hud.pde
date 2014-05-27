@@ -11,11 +11,13 @@ class Hud extends PGraphics{
 	ListBox comPorts, framelist;
 	Button loadfile, disconnectb, loadframe, insertbefore, newframeattheend, deleteframe, eraseframe, playbutton, stopbutton, updateports, snakemode;
 	Numberbox animationspeed;
-
+    PFont f;
 	public Hud(PApplet applet_) {	// initialize the HUD
 		applet = applet_;
 		disp = applet_.g;
 		cp5 = new ControlP5(applet);
+        f = createFont("Georgia", 24);
+
 		comPorts = cp5.addListBox("serialPorts")
                  .setPosition(1080, 50)
                  .setSize(120, 100)
@@ -155,7 +157,6 @@ class Hud extends PGraphics{
 	// Function for updating the frame list after a frame removal or creation
   	public void updateFrameList() {
       	framelist.clear();
-      	delay(100);
       	for (int i=0;i<myAnimFile.numberOfLines();i++) {
           	String item = "Frame " + String.valueOf(i+1);
           	ListBoxItem frame = framelist.addItem(item, i);
@@ -188,7 +189,6 @@ class Hud extends PGraphics{
 	    if(snakeEnabled == true) {
 	        displayedFrameLabel = "Playing snake !";
 	    }
-	    PFont f = createFont("Georgia", 24);
       	disp.textFont(f);
 	    disp.textSize(10);
 	    disp.fill(255);

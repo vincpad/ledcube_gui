@@ -17,10 +17,7 @@ void setup() {
 	myCube = new LedCube(cubeSize, this);
 	mySerial = new SerialComm();
 	myHud = new Hud(this);
-
 	frameRate(30);
-		
-	//drawHud();
 	initSnake();
 	createSnake();
 	//fftVisualizerSetup();	// uncomment to enable audio visualizer
@@ -28,8 +25,10 @@ void setup() {
 
 void draw() {
 	//fftVisualizer();	// uncomment to enable audio visualizer
+	s();
   	snake();
 	myCube.refresh();
   	playAnimation();
   	myHud.refreshDisplayedText();
+  	e(1);
 }
