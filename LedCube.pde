@@ -2,11 +2,11 @@
 //
 // Part of ledcube_gui project : https://github.com/cybervinc/ledcube_gui
 //
-
+Led[] leds; // Leds making the 3D cube
+  boolean[][][] led_value;  // 3 dimensional array to store all leds state
 class LedCube extends PGraphics{
 	int dim;
-  Led[] leds; // Leds making the 3D cube
-  boolean[][][] led_value;  // 3 dimensional array to store all leds state
+
   //  Camera settings
   int zX = -60, zY = -60, zZ = 150;
   float zoomValue=1, rotx = PI/4, roty = PI/4;
@@ -14,7 +14,7 @@ class LedCube extends PGraphics{
   PGraphics disp;
   PApplet applet;
   PGraphics buffer; // Graphical buffer to do color-based 3D picking
-  PFont f;
+
   
 
 	public LedCube(int dim_, PApplet applet_) {	// creating the Led objects to draw the cube
@@ -23,7 +23,6 @@ class LedCube extends PGraphics{
     applet = applet_;
     led_value = new boolean[dim][dim][dim]; 
 		leds = new Led[dim*dim*dim];
-    f = createFont("Georgia", 24);
     disp.sphereDetail(10);
 		int id = 0;
   		for (int i = 0; i < dim; ++i) {
@@ -39,6 +38,7 @@ class LedCube extends PGraphics{
       buffer = createGraphics(applet.width, applet.height, P3D);
 	}
 	public void refresh() {  // refresh the cube display
+
 		disp.pushMatrix();
     	disp.camera(zX, zY, zZ, 0, 0, 0, 0, 1, 0);
     	disp.lights();
@@ -63,6 +63,7 @@ class LedCube extends PGraphics{
 	}
 	private  void drawaxes(){  // drawing the X,Y,Z axis
     	int val = -dim*5+5;
+      PFont f = createFont("Georgia", 24);
       disp.textFont(f);
     	disp.textSize(10);
     	disp.stroke(255,0,0);
