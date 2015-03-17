@@ -20,15 +20,15 @@ void setup() {
 	frameRate(30);
 	initSnake();
 	createSnake();
-	//fftVisualizerSetup();	// uncomment to enable audio visualizer
+	fftVisualizerSetup();	// uncomment to enable audio visualizer
 }
 
 void draw() {
-	//fftVisualizer();	// uncomment to enable audio visualizer
+	fftVisualizer();	// uncomment to enable audio visualizer
 	s();
   	snake();
 	myCube.refresh();
   	playAnimation();
   	myHud.refreshDisplayedText();
-  	e(1);
+  	//e(1);
 }

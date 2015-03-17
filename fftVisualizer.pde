@@ -3,7 +3,7 @@
 // Part of ledcube_gui project : https://github.com/cybervinc/ledcube_gui
 //
 
-int[] value = new int[66];
+boolean[][][] history = new boolean[8][8][8];
 
 import ddf.minim.analysis.*;
 import ddf.minim.*;
@@ -16,44 +16,78 @@ boolean fileselected = false;
 void fftVisualizerSetup() {
   minim = new Minim(this);
   selectInput("Select an audio file:", "fileSelected2");
+  for (int i = 0; i < 8; ++i) {
+    for (int j = 0; j < 8; ++j) {
+      for (int k = 0; k < 8; ++k) {
+        history[i][j][k] = false;
+      }
+    }
+  }
+
 }
 
 void fileSelected2(File selection) {
   String audioFileName = selection.getAbsolutePath();
-  jingle = minim.loadFile(audioFileName, 2048); //minim.getLineIn(Minim.STEREO, 2048); // 
+  jingle = minim.loadFile(audioFileName, 1024); //minim.getLineIn(Minim.STEREO, 2048); // 
   jingle.loop();
 
   fft = new FFT(jingle.bufferSize(), jingle.sampleRate());
   // calculate averages based on a miminum octave width of 22 Hz
   // split each octave into 8 bands
-  fft.logAverages(22,8);
+  //fft.logAverages(22,8);
+  fft.linAverages(9);
   fileselected = true;
 }
 void fftVisualizer() {
   if(fileselected == true) {
     fft.forward(jingle.mix);
     myCube.clear();
-    int n = 0;
+    float[] coef = new float[]{0.3, 0.6, 1, 2, 4, 4.5, 6, 9};
     for(int i = 0; i < 8; i++) {
-      for(int j = 0; j < 8; j++) {
-
-        int val=int(fft.getAvg(n)/8);
-        if(fft.getAvg(n)/8>8) {
+        float valTmp = fft.getAvg(i)*coef[i];
+  
+        int val = int(valTmp);
+        if(val>8) {
           val = 8;
         }
-        value[n] = val;
-        for(int k = 1; k <= value[n]; k++) {
+        
+        for(int k = 1; k <= val; k++) {
           boolean state = true;
-          if(value[n] == 0) {
+          if(val == 0) {
             state = false;
           }
-          myCube.setLed(i,j,k-1,state);
+          
+          myCube.setLed(0,i,k-1,state);
+          //history[i][0][k-1] = state;
         }
-        n++;
+        print(i);
+        print("  ");
+        println(fft.getAvg(i));
       }
-    }   
+    }
+
+    for (int i = 7; i > 0; --i) {
+      for (int j = 0; j < 8; ++j) {
+        for (int k = 0; k < 8; ++k) {
+          myCube.setLed(i,j,k,history[i][j][k]);
+        }
+      }
+    }
+
     if(mySerial.available()) {
       mySerial.sendFrames();
     }
-  }
+
+    for (int j = 0; j < 8; ++j) {
+        for (int k = 0; k < 8; ++k) {
+          history[0][j][k] = myCube.getLedState(0,j,k);
+        }
+    }
+    for (int i = 7; i > 0; --i) {
+      for (int j = 0; j < 8; ++j) {
+        for (int k = 0; k < 8; ++k) {
+          history[i][j][k] = history[i-1][j][k];
+        }
+      }
+    }
 }
