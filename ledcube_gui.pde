@@ -26,9 +26,9 @@ void setup() {
 void draw() {
 	fftVisualizer();	// uncomment to enable audio visualizer
 	s();
-  	snake();
-	myCube.refresh();
-  	playAnimation();
-  	myHud.refreshDisplayedText();
+  	////snake();
+	//myCube.refresh();
+  	//playAnimation();
+  	//myHud.refreshDisplayedText();
   	//e(1);
 }
